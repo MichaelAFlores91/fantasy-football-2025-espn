@@ -1,4 +1,9 @@
 -- drop table if exists
+drop table if exists ranking;
+drop table if exists nfl_player;
+drop table if exists user;
+drop table if exists team;
+drop table if exists position;
 
 CREATE TABLE user (
     id SERIAL PRIMARY KEY,
