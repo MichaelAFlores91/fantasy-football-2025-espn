@@ -22,3 +22,11 @@ class NflPlayerBase(BaseModel):
 
 class RankingBase(BaseModel):
     team_id: int
+
+
+class TeamOut(TeamBase):
+    id: int
+
+
+class NflPlayerOut(NflPlayerBase):
+    id: int
