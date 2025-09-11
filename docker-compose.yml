@@ -5,9 +5,10 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: my_database
+      POSTGRES_DB: football
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./data:/data   # 👈 Mounts your local ./data folder into /data inside the container
     ports:
       - "5432:5432"
 
