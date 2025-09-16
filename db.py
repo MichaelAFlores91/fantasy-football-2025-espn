@@ -9,6 +9,7 @@ from schemas import (
     PositionBase,
     TeamOut,
     NflPlayerOut,
+    RankingOut,
 )
 from db_models import DBNfl_player, DBUser, DBRanking, DBTeam, DBPosition
 
@@ -32,6 +33,13 @@ def get_all_teams():
 
 
 # get user team
+def get_team(team_id: int) -> TeamOut | None:
+    db = sessionLocal()
+    team = db.query(DBTeam).filter(DBTeam.id == team_id).first()
+    db.close()
+    return team
+
+
 # get all nfl players
 def get_all_nfl_players():
     db = sessionLocal()
@@ -52,7 +60,25 @@ def get_all_nfl_players():
 
 
 # get one nfl player
+def get_player(nfl_player_id: int):
+    db = sessionLocal()
+    player = db.query(DBNfl_player).filter(DBNfl_player.id == nfl_player_id).first()
+    db.close()
+    return player
+
+
 # get all rankings
+def get_all_rankings():
+    db = sessionLocal()
+
+    db_rankings = db.query(DBRanking).order_by(DBRanking.id).all()
+    rankings = []
+    for db_ranking in db_rankings:
+        rankings.append(RankingOut(id=db_ranking.id, team_id=db_ranking.team_id))
+    db.close()
+    return rankings
+
+
 # find positions for certain players
 # create player
 # delete player (only if out for year)

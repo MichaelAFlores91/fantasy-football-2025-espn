@@ -30,3 +30,7 @@ class TeamOut(TeamBase):
 
 class NflPlayerOut(NflPlayerBase):
     id: int
+
+
+class RankingOut(RankingBase):
+    id: int
