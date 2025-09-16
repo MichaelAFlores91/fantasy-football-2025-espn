@@ -10,6 +10,8 @@ from schemas import (
     TeamOut,
     NflPlayerOut,
     RankingOut,
+    PositionOut,
+    NflPlayerCreate,
 )
 from db_models import DBNfl_player, DBUser, DBRanking, DBTeam, DBPosition
 
@@ -80,6 +82,69 @@ def get_all_rankings():
 
 
 # find positions for certain players
+def get_positions():
+    db = sessionLocal()
+
+    db_positions = db.query(DBPosition).order_by(DBPosition.id).all()
+    positions = []
+    for db_position in db_positions:
+        positions.append(
+            PositionOut(id=db_position.id, position_name=db_position.position_name)
+        )
+    db.close()
+    return positions
+
+
 # create player
+def create_player(nfl_player: NflPlayerCreate):
+    db = sessionLocal()
+
+    player_model = DBNfl_player(**nfl_player.model_dump())
+
+    db.add(player_model)
+    db.commit()
+    db.refresh(player_model)
+
+    result = NflPlayerOut(
+        id=player_model.id,
+        player_name=player_model.player_name,
+        position_id=player_model.position_id,
+        team_id=player_model.team_id,
+    )
+    db.close()
+    return result
+
+
 # delete player (only if out for year)
+def delete_player(nfl_player_id: int):
+    db = sessionLocal()
+    player = db.query(DBNfl_player).filter(DBNfl_player.id == nfl_player_id).first()
+    if not player:
+        db.close()
+        raise HTTPException(status_code=404, detail="Player not found")
+    db.delete(player)
+    db.commit()
+    db.close()
+    return {"detail": f"Player with id {nfl_player_id} deleted successfully"}
+
+
 # change players to different team
+
+
+def change_player_team(nfl_player_id: int, new_team_id: int):
+    db = sessionLocal()
+    player = db.query(DBNfl_player).filter(DBNfl_player.id == nfl_player_id).first()
+    if not player:
+        db.close()
+        raise HTTPException(status_code=404, detail="Player not found")
+    player.team_id = new_team_id
+    db.commit()
+    db.refresh(player)
+    result = NflPlayerOut(
+        id=player.id,
+        player_name=player.player_name,
+        position_id=player.position_id,
+        team_id=player.team_id,
+    )
+    db.close()
+    return result

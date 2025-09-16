@@ -34,3 +34,11 @@ class NflPlayerOut(NflPlayerBase):
 
 class RankingOut(RankingBase):
     id: int
+
+
+class PositionOut(PositionBase):
+    id: int
+
+
+class NflPlayerCreate(NflPlayerBase):
+    pass
