@@ -15,7 +15,7 @@ function App () {
         </header>
         <main>
             <Routes>
-                <Route path="/*" element={<HomePage />} />
+                <Route path="/" element={<HomePage />} />
                 <Route path="/players" element={<Players />} />
                 <Route path="/rankings" element={<Rankings />} />
                 <Route path="/teams" element={<Teams />} />
