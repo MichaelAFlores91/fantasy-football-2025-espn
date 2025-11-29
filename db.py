@@ -37,9 +37,11 @@ def get_all_teams():
 # get user team
 def get_team(team_id: int) -> TeamOut | None:
     db = sessionLocal()
-    team = db.query(DBTeam).filter(DBTeam.id == team_id).first()
+    db_team = db.query(DBTeam).filter(DBTeam.id == team_id).first()
     db.close()
-    return team
+    if not db_team:
+        return None
+    return TeamOut(id=db_team.id, team_name=db_team.team_name, user_id=db_team.user_id)
 
 
 # get all nfl players
@@ -125,13 +127,11 @@ def delete_player(nfl_player_id: int):
     db.delete(player)
     db.commit()
     db.close()
-    return {"detail": f"Player with id {nfl_player_id} deleted successfully"}
+    return None
 
+    # change players to different team
 
-# change players to different team
-
-
-def change_player_team(nfl_player_id: int, new_team_id: int):
+    # def change_player_team(nfl_player_id: int, new_team_id: int):
     db = sessionLocal()
     player = db.query(DBNfl_player).filter(DBNfl_player.id == nfl_player_id).first()
     if not player:

@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Request
 from db import (
     get_all_teams,
@@ -8,7 +9,6 @@ from db import (
     get_positions,
     create_player,
     delete_player,
-    change_player_team,
 )
 
 from schemas import (
@@ -26,7 +26,16 @@ from schemas import (
 
 app = FastAPI()
 
+
 origins = ["http://127.0.0.1:5173", "http://localhost:5173"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/api/teams")
@@ -76,9 +85,8 @@ async def remove_player(player_id: int) -> None:
         raise HTTPException(status_code=404, detail="Player not found")
     return None
 
-
-@app.patch("/api/players/{player_id}/team", status_code=200)
-async def update_player_team(player_id: int, team: TeamBase) -> NflPlayerOut:
+    # @app.patch("/api/players/{player_id}/team", status_code=200)
+    # async def update_player_team(player_id: int, team: TeamBase) -> NflPlayerOut:
     updated_player = change_player_team(player_id, team)
     if not updated_player:
         raise HTTPException(status_code=404, detail="Player or Team not found")

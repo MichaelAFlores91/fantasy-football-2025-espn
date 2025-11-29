@@ -1,58 +1,61 @@
-import { useState, useEffect } from "react"
-import { getPlayers } from "../../api"
-import { getPlayerById } from "../../api"
-import { createPlayer } from "../../api"
-import { removePlayerFromTeam } from "../../api"
-import { updatePlayerTeam } from "../../api"
+import { useState, useEffect } from "react";
+import { getPlayers, createPlayer } from "../../api";
+import NewPlaya from "./addplayer";
 
-
-export default function Players(id, refreshTrigger) {
-    const [error, setError] = useState(null)
-    const [player, setPlayer] = useState([])
-    const [newPlay, setNewPlay] = useState([])
+export default function Players({ id, refreshTrigger }) {
+    const [players, setPlayers] = useState([]);
+    const [error, setError] = useState(null);
 
     async function refreshPlayers() {
         try {
-            const player = await getPlayers(id);
-            if (player instanceof Error){
+            const data = await getPlayers();
+            if (data instanceof Error) {
                 setError("Couldn't find players");
                 return;
             }
-            setPlayer(player);
-        } catch (error) {
-            setError("Failed to load players")
+            setPlayers(data);
+        } catch (err) {
+            setError("Failed to load players");
         }
     }
 
     useEffect(() => {
         refreshPlayers();
-    }, [id, refreshTrigger])
+    }, [id, refreshTrigger]);
 
     async function newPlayer() {
         try {
-            const newPlay = await createPlayer();
-            if (newPlay instanceof Error){
+            const created = await createPlayer();
+            if (created instanceof Error) {
                 setError("Couldn't create player");
                 return;
             }
-            setNewPlay(newPlay);
-        } catch (error) {
-            setError("Failed to load new player")
+            // optional: refresh player list after creation
+            refreshPlayers();
+        } catch (err) {
+            setError("Failed to create player");
         }
     }
-
-
-
-
 
     return (
         <div>
             <h1>Players Page</h1>
-            <p>This is the players page content.</p>
-        <button onClick={newPlayer}>add new player</button>
+            {error && <h2 style={{ color: "red" }}>{error}</h2>}
+            <button onClick={newPlayer}>Add New Player</button>
 
-
-
+            <div className="player-list">
+                {players.length > 0 ? (
+                    players.map((p) => (
+                        <div key={p.id}>
+                            <h3>{p.player_name}</h3>
+                            <p>Position ID: {p.position_id}</p>
+                            <p>Team ID: {p.team_id}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>No players found.</p>
+                )}
+            </div>
         </div>
-    )
+    );
 }

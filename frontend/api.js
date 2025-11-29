@@ -1,22 +1,24 @@
 const baseURL = "http://localhost:8000";
 
-//get_teams - /api/teams
+// get_teams - /api/teams
 export async function getTeams() {
     try {
-        const response = await fetch(`${base}/api/teams`);
+        const response = await fetch(`${baseURL}/api/teams`);
         if (!response.ok) {
-            throw new Error(`${response.status}`);
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
         return data;
     } catch (e) {
         console.error("Error fetching teams:", e);
+        // Always return an Error object so your React code handles it correctly
         if (e instanceof Error) {
-            return e.message;
+            return e;
         }
         return new Error("Unknown error occurred");
     }
 }
+
 //get_team_by_id - /api/teams/{team_id}
 export async function getTeamById(team_id) {
     try {
@@ -107,6 +109,8 @@ export async function getAllPositions() {
 }
 
 //add_player - /api/players
+
+
 export async function createPlayer(new_player) {
     try {
         const response = await fetch(`${baseURL}/api/players`, {
@@ -116,19 +120,20 @@ export async function createPlayer(new_player) {
             },
             body: JSON.stringify(new_player),
         });
+
         if (!response.ok) {
-            throw new Error(`${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Failed to create player: ${response.status} - ${errorText}`);
         }
+
         const data = await response.json();
         return data;
     } catch (e) {
         console.error("Error creating player:", e);
-        if (e instanceof Error) {
-            return e.message;
-        }
-        return new Error("Unknown error occurred");
+        return e instanceof Error ? e : new Error("Unknown error occurred");
     }
 }
+
 //remove_player - /api/players/{player_id}/team
 export async function removePlayerFromTeam(player_id) {
     try {

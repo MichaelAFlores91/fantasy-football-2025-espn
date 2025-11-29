@@ -17,7 +17,7 @@ class DBTeam(Base):
     __tablename__ = "team"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    teamname: Mapped[str] = mapped_column(nullable=False, unique=True)
+    team_name: Mapped[str] = mapped_column(nullable=False, unique=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
 
 
